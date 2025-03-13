@@ -15,7 +15,18 @@ class User(AbstractUser):
         help_text='Обязательно поле. Введите корректный адрес электронно '
                   'почты.'
     )
+    avatar = models.ImageField(
+        verbose_name='Аватар',
+        upload_to='media/avatar/',
+        blank=True, null=True
+    )
     
+    class Meta:
+        ordering = ('id',)
+        
+    def __str__(self):
+        return self.email
+
     
 class Subscription(models.Model):
     user = models.ForeignKey(
