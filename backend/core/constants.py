@@ -7,3 +7,4 @@ MAX_LENGTH_RECIPES = 100
 
 PATTERN_VALID_USERNAME = r'^[\w.@+-]+\Z'
 URL_PATH_ME = 'me'
+URL_PATH_AVATAR = 'me/avatar'

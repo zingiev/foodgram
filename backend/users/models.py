@@ -1,10 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-from core.constants import (
-    MAX_LENGTH_USERNAME,
-    MAX_LENGTH_EMAIL
-)
+from core.constants import MAX_LENGTH_EMAIL
 
 # Create your models here.
 class User(AbstractUser):
@@ -17,7 +14,7 @@ class User(AbstractUser):
     )
     avatar = models.ImageField(
         verbose_name='Аватар',
-        upload_to='media/avatar/',
+        upload_to='avatar/',
         blank=True, null=True
     )
     
