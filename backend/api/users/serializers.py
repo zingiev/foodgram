@@ -24,10 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def validate_username(self, username):
-        # Проверяем, что имя пользователя не равно "me"
         username_by_path_me(username)
-
-        # Проверка валидности username по паттерну
         username_by_pattern(username)
         return username
 
@@ -39,19 +36,15 @@ class UserSerializer(serializers.ModelSerializer):
             author=request.user, user=obj).exists()
 
 
-class GetTokenSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(required=True)
-    password = serializers.CharField(required=True)
-
-    class Meta:
-        model = User
-        fields = ('email', 'password')
+class GetTokenSerializer(serializers.Serializer):
+    email = serializers.CharField(required=True, write_only=True)
+    password = serializers.CharField(required=True, write_only=True)
 
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
         user = get_object_or_404(User, email=email)
-        if user.email != email and user.check_password(password):
+        if user.email != email or not user.check_password(password):
             raise serializers.ValidationError(
                 {'error': 'Неверный email или пароль'}
             )
@@ -65,10 +58,30 @@ class Base64ImageField(serializers.ImageField):
             ext = format.split('/')[-1]
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         return super().to_internal_value(data)
-    
+
 
 class AvatarSerializer(serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
+
     class Meta:
         model = User
         fields = ('avatar',)
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True, required=True)
+    current_password = serializers.CharField(write_only=True, required=True)
+
+    def validate_current_password(self, current_password):
+        user = self.instance
+        if not user.check_password(current_password):
+            raise serializers.ValidationError('Неверный текущий пароль')
+        return current_password
+
+    def validate_new_password(self, new_password):
+        current_password = self.initial_data.get('current_password')
+        if new_password == current_password:
+            raise serializers.ValidationError(
+                'Новый пароль не может совпадать с текущим'
+            )
+        return new_password

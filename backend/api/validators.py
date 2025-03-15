@@ -2,7 +2,11 @@ import re
 
 from rest_framework import serializers
 
-from core.constants import PATTERN_VALID_USERNAME, URL_PATH_ME
+from core.constants import (
+    PATTERN_VALID_USERNAME,
+    URL_PATH_ME,
+    PATTERN_TAG_SLUG
+)
 
 
 def username_by_pattern(username):
@@ -19,3 +23,10 @@ def username_by_path_me(username):
                          f'нельзя регистрироваться'}
         )
     return username
+
+
+def slug_by_pattern(slug):
+    is_valid_slug = re.match(PATTERN_TAG_SLUG, slug)
+    if not is_valid_slug:
+        raise serializers.ValidationError()
+    return slug

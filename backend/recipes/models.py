@@ -5,7 +5,8 @@ from core.constants import (
     MAX_LENGTH_TAG,
     MAX_LENGTH_INGREDIENT,
     MAX_LENGTH_MEASUREMENT_UNIT,
-    MAX_LENGTH_RECIPES
+    MAX_LENGTH_RECIPES,
+    MAX_LENGTH_SLUG
 )
 
 
@@ -18,7 +19,9 @@ class Tag(models.Model):
         max_length=MAX_LENGTH_TAG,
         unique=True
     )
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(
+        max_length=MAX_LENGTH_SLUG,
+        unique=True)
     
     def __str__(self):
         return self.name
