@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.urls import reverse
 
 from core.constants import (
     MAX_LENGTH_TAG,
@@ -116,3 +115,35 @@ class ShortLink(models.Model):
 
     def __str__(self):
         return f'{self.recipe, self.short_code}'
+
+
+class RecipeFavorite(models.Model):
+    user = models.ForeignKey(
+        verbose_name='Пользователь',
+        to=User,
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        verbose_name='Рецепт',
+        to=Recipes,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.recipe
+
+
+class RecipeShoppingCart(models.Model):
+    user = models.ForeignKey(
+        verbose_name='Пользователь',
+        to=User,
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        verbose_name='Рецепт',
+        to=Recipes,
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.recipe
