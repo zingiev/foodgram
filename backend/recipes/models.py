@@ -14,6 +14,8 @@ from core.constants import (
 User = get_user_model()
 
 # Create your models here.
+
+
 class Tag(models.Model):
     name = models.CharField(
         verbose_name='Тег',
@@ -23,12 +25,12 @@ class Tag(models.Model):
     slug = models.SlugField(
         max_length=MAX_LENGTH_SLUG,
         unique=True)
-    
+
     class Meta:
-        verbose_name='Тег'
-        verbose_name_plural='Теги'
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
         ordering = ('id',)
-    
+
     def __str__(self):
         return self.name
 
@@ -42,12 +44,12 @@ class Ingredients(models.Model):
         verbose_name='Единица измерения',
         max_length=MAX_LENGTH_MEASUREMENT_UNIT
     )
-    
+
     class Meta:
-        verbose_name='Ингредиент'
-        verbose_name_plural='Ингредиенты'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
         ordering = ('id',)
-    
+
     def __str__(self):
         return self.name
 
@@ -75,19 +77,18 @@ class Recipes(models.Model):
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время приготовления'
     )
-    
+
     class Meta:
-        verbose_name='Рецепт'
-        verbose_name_plural='Рецепты'
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
         ordering = ('id',)
-    
+
     def __str__(self):
         return self.name
-    
+
     def get_absolute_url(self):
         return reverse("get-link", kwargs={"pk": self.pk})
-    
-    
+
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
