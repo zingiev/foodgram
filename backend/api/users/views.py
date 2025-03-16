@@ -66,7 +66,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 
 class APIGetTokenVeiw(APIView):
     @staticmethod

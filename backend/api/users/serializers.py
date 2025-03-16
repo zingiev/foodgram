@@ -1,12 +1,10 @@
-import base64
-
 from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from api.validators import username_by_path_me, username_by_pattern
 from users.models import Subscription
+from core.decodeimage import Base64ImageField
 
 
 User = get_user_model()
@@ -34,6 +32,12 @@ class UserSerializer(serializers.ModelSerializer):
             return False
         return Subscription.objects.filter(
             author=request.user, user=obj).exists()
+        
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.set_password(self.initial_data.get('password'))
+        user.save()
+        return user
 
 
 class GetTokenSerializer(serializers.Serializer):
@@ -49,15 +53,6 @@ class GetTokenSerializer(serializers.Serializer):
                 {'error': 'Неверный email или пароль'}
             )
         return data
-
-
-class Base64ImageField(serializers.ImageField):
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith('data:image'):
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-        return super().to_internal_value(data)
 
 
 class AvatarSerializer(serializers.ModelSerializer):
