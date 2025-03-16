@@ -6,7 +6,7 @@ from recipes.models import (
     Recipes,
     Ingredients,
     RecipeIngredient,
-    RecipeFavorite,
+    RecipeFavorites,
     RecipeShoppingCart,
 )
 from users.models import Subscription
@@ -92,7 +92,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return RecipeFavorite.objects.filter(user=request.user).exists()
+        return RecipeFavorites.objects.filter(user=request.user).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
@@ -138,8 +138,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class FavoritesSerializer(serializers.ModelSerializer):
+class RecipeFavoritesSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='recipe.name', required=False)
+    image = serializers.ImageField(source='recipe.image', required=False)
+    cooking_time = serializers.IntegerField(
+        source='recipe.cooking_time', required=False)
 
     class Meta:
-        model = RecipeFavorite
+        model = RecipeFavorites
         fields = ('id', 'name', 'image', 'cooking_time')

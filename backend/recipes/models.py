@@ -117,7 +117,7 @@ class ShortLink(models.Model):
         return f'{self.recipe, self.short_code}'
 
 
-class RecipeFavorite(models.Model):
+class RecipeFavorites(models.Model):
     user = models.ForeignKey(
         verbose_name='Пользователь',
         to=User,
