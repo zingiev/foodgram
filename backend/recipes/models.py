@@ -7,7 +7,8 @@ from core.constants import (
     MAX_LENGTH_INGREDIENT,
     MAX_LENGTH_MEASUREMENT_UNIT,
     MAX_LENGTH_RECIPES,
-    MAX_LENGTH_SLUG
+    MAX_LENGTH_SLUG,
+    MAX_LENGTH_SHORT_CODE
 )
 
 
@@ -64,7 +65,7 @@ class Recipes(models.Model):
     )
     image = models.ImageField(
         verbose_name='Картинка',
-        upload_to='media/recipes/'
+        upload_to='recipes/'
     )
     text = models.TextField()
     ingredients = models.ManyToManyField(
@@ -84,9 +85,6 @@ class Recipes(models.Model):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse("get-link", kwargs={"pk": self.pk})
-
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
@@ -102,3 +100,19 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name='Сумма'
     )
+
+
+class ShortLink(models.Model):
+    recipe = models.ForeignKey(
+        verbose_name='Рецепт',
+        to=Recipes,
+        on_delete=models.CASCADE,
+        related_name='short_link'
+    )
+    short_code = models.CharField(
+        max_length=MAX_LENGTH_SHORT_CODE,
+        unique=True
+    )
+
+    def __str__(self):
+        return f'{self.recipe, self.short_code}'
