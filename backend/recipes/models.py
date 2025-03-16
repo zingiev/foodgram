@@ -13,8 +13,6 @@ from core.constants import (
 
 User = get_user_model()
 
-# Create your models here.
-
 
 class Tag(models.Model):
     name = models.CharField(
