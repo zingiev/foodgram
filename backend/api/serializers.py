@@ -1,11 +1,15 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 
-from recipes.models import Tag, Recipes, Ingredients, RecipeIngredient
+from recipes.models import (
+    Tag,
+    Recipes,
+    Ingredients,
+    RecipeIngredient,
+    RecipeFavorites,
+    RecipeShoppingCart,
+)
 from users.models import Subscription
-from favorites.models import Favorite
-from shopping_cart.models import ShoppingCart
 from core.decodeimage import Base64ImageField
 from .validators import slug_by_pattern
 
@@ -88,13 +92,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return Favorite.objects.filter(user=request.user).exists()
+        return RecipeFavorites.objects.filter(user=request.user).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return ShoppingCart.objects.filter(user=request.user).exists()
+        return RecipeShoppingCart.objects.filter(user=request.user).exists()
 
     def create(self, validated_data):
         ingredients = validated_data.pop('recipeingredient_set')
@@ -121,7 +125,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
         if tags:
             instance.tags.set(tags)
-        
+
         if ingredients:
             instance.recipeingredient_set.all().delete()
             for ingredient in ingredients:
@@ -132,3 +136,14 @@ class RecipeSerializer(serializers.ModelSerializer):
                 )
         instance.save()
         return instance
+
+
+class RecipeFavoritesSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='recipe.name', required=False)
+    image = serializers.ImageField(source='recipe.image', required=False)
+    cooking_time = serializers.IntegerField(
+        source='recipe.cooking_time', required=False)
+
+    class Meta:
+        model = RecipeFavorites
+        fields = ('id', 'name', 'image', 'cooking_time')
