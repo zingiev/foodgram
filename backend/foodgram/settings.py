@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,11 +40,10 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'djoser',
     'users.apps.UsersConfig',
     'core.apps.CoreConfig',
     'recipes.apps.RecipesConfig',
-    'favorites.apps.FavoritesConfig',
-    'shopping_cart.apps.ShoppingCartConfig',
     'api.apps.ApiConfig',
 ]
 
@@ -140,16 +138,29 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
+        'rest_framework.authentication.TokenAuthentication'
     ],
     'DEFAULT_PAGINATION_CLASS': [
         'rest_framework.pagination.PageNumberPagination'
     ]
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'AUTH_HEADER_TYPES': ('Bearer',)
+AUTHENTICATION_BACKENDS = [
+    'djoser.auth_backends.LoginFieldBackend',
+]
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'USERNAME_FIELD': 'email',
+    'SERIALIZERS': {
+        'user_create': 'api.users.serializers.CustomUserCreateSerializer',
+        'user': 'api.users.serializers.CustomUserSerialier',
+        'current_user': 'api.users.serializers.CustomUserSerialier',
+        'set_password': 'djoser.serializers.SetPasswordSerializer',
+    },
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.AllowAny'],
+    }
 }
 
 SITE_URL = 'http://localhost:9000'
