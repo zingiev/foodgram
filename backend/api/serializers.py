@@ -138,7 +138,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class RecipeFavoritesSerializer(serializers.ModelSerializer):
+class RecipeFavoriteSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='recipe.name', required=False)
     image = serializers.ImageField(source='recipe.image', required=False)
     cooking_time = serializers.IntegerField(

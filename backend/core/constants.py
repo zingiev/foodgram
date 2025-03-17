@@ -12,4 +12,4 @@ PATTERN_TAG_SLUG = r'^[-a-zA-Z0-9_]+$'
 
 URL_PATH_ME = 'me'
 URL_PATH_AVATAR = 'me/avatar'
-URL_PATH_SET_PASSWORD = 'set_password'
+URL_PATH_FAVORITE = 'favorite'

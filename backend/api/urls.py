@@ -6,7 +6,7 @@ from .views import (
     RecipeViewSet,
     IngredientViewSet,
     RecipeShortLinkView,
-    RecipeFavoritesViewSet,
+    RecipeFavoriteViewSet
 )
 from .users.views import CustomUserViewSet
 
@@ -18,8 +18,12 @@ v1_router.register('users', CustomUserViewSet, basename='name')
 v1_router.register('tags', TagViewSet, basename='tags')
 v1_router.register('ingredients', IngredientViewSet, basename='ingredients')
 v1_router.register('recipes', RecipeViewSet, basename='recipes')
-v1_router.register('recipes/(?P<pk>\d+)/favorite',
-                   RecipeFavoritesViewSet, basename='recipe_favorite'),
+v1_router.register(
+    r'recipes/(?P<recipe_id>\d+)/favorite',
+    RecipeFavoriteViewSet,
+    basename='recipe_favorite'
+)
+
 
 
 urlpatterns = [
