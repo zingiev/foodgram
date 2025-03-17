@@ -1,19 +1,16 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from .users.views import UserViewSet, APIGetTokenVeiw
+from .users.views import CustomUserViewSet
 
 
 app_name = 'api'
 
 v1_router = routers.DefaultRouter()
-v1_router.register('users', UserViewSet, basename='users')
+v1_router.register('users', CustomUserViewSet, basename='name')
 
-auth_urlpatterns = [
-    path('token/login/', APIGetTokenVeiw.as_view(), name='auth_token')
-]
 
 urlpatterns = [
     path('', include(v1_router.urls)),
-    path('auth/', include(auth_urlpatterns))
+    path('auth/', include('djoser.urls.authtoken')),
 ]
