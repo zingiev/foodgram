@@ -91,4 +91,4 @@ class RecipeFavoriteViewSet(ShoppingFavoriteViewSet):
 
 class RecipeShoppingCartViewSet(ShoppingFavoriteViewSet):
     queryset = RecipeShoppingCart.objects.all()
-    serializer_class = RecipeFavoriteSerializer
+    serializer_class = RecipeShoppingCartSerializer
