@@ -141,7 +141,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class RecipeFavoriteSerializer(serializers.ModelSerializer):
+class RecipeMinifiedSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=CurrentUserDefault())
     name = serializers.ReadOnlyField(source='recipe.name')
     id = serializers.ReadOnlyField(source='recipe.id')
@@ -151,3 +151,11 @@ class RecipeFavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeFavorites
         fields = ('id', 'user', 'name', 'image', 'cooking_time')
+
+
+class RecipeFavoriteSerializer(RecipeMinifiedSerializer):
+    pass
+
+
+class RecipeShoppingCartSerializer(RecipeMinifiedSerializer):
+    pass

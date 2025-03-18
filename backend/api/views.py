@@ -9,19 +9,21 @@ from django.shortcuts import get_object_or_404, redirect
 from django.conf import settings
 
 from .pagination import TagPagination, IngredientPagination
-from .mixins import CreateDeleteViewSet
+from .mixins import ShoppingFavoriteViewSet
 from recipes.models import (
     Tag,
     Recipes,
     Ingredients,
     ShortLink,
-    RecipeFavorites
+    RecipeFavorites,
+    RecipeShoppingCart
 )
 from .serializers import (
     TagSerializer,
     RecipeSerializer,
     IngredientSerializer,
     RecipeFavoriteSerializer,
+    RecipeShoppingCartSerializer
 )
 
 
@@ -82,26 +84,11 @@ class RedirectRecipeShortLinkView(views.APIView):
         return redirect(f'{settings.SITE_URL}/api/recipes/{short_link.recipe.id}')
 
 
-class RecipeFavoriteViewSet(CreateDeleteViewSet):
+class RecipeFavoriteViewSet(ShoppingFavoriteViewSet):
     queryset = RecipeFavorites.objects.all()
     serializer_class = RecipeFavoriteSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def create(self, request, **kwargs):
-        recipe_id = kwargs.get('recipe_id')
-        recipe = get_object_or_404(Recipes, pk=recipe_id)
-        favorite, created = self.queryset.get_or_create(
-            user=request.user, recipe=recipe)
-        serializer = self.get_serializer(favorite)
-        if created:
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, **kwargs):
-        recipe_id = kwargs.get('recipe_id')
-        favorite = RecipeFavorites.objects.filter(
-            user=request.user, recipe=recipe_id)
-        if favorite.exists():
-            favorite.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class RecipeShoppingCartViewSet(ShoppingFavoriteViewSet):
+    queryset = RecipeShoppingCart.objects.all()
+    serializer_class = RecipeFavoriteSerializer

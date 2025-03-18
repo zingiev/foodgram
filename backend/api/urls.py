@@ -6,7 +6,8 @@ from .views import (
     RecipeViewSet,
     IngredientViewSet,
     RecipeShortLinkView,
-    RecipeFavoriteViewSet
+    RecipeFavoriteViewSet,
+    RecipeShoppingCartViewSet
 )
 from .users.views import CustomUserViewSet, UserSubscribeViewSet
 
@@ -31,6 +32,11 @@ v1_router.register(
     r'recipes/(?P<recipe_id>\d+)/favorite',
     RecipeFavoriteViewSet,
     basename='recipe_favorite'
+)
+v1_router.register(
+    r'recipes/(?P<recipe_id>\d+)/shopping_cart',
+    RecipeShoppingCartViewSet,
+    basename='recipe_shopping_cart'
 )
 
 
