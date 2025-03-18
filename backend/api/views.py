@@ -124,8 +124,8 @@ class RecipeFavoriteViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['post', 'delete']
 
-    def perform_create(self, serializer):
-        recipe_id = self.kwargs.get('recipe_id')
+    def create(self, *args, **kwargs):
+        recipe_id = kwargs.get('recipe_id')
         recipe = get_object_or_404(Recipes, pk=recipe_id)
         favorite, created = RecipeFavorites.objects.get_or_create(
             user=self.request.user,
@@ -138,5 +138,23 @@ class RecipeFavoriteViewSet(viewsets.ModelViewSet):
             )
         return Response(
             'Рецепт уже в избранном',
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def delete(self, *args, **kwargs):
+        recipe_id = kwargs.get('recipe_id')
+        recipe = get_object_or_404(Recipes, pk=recipe_id)
+        favorite = RecipeFavorites.objects.filter(
+            user=self.request.user,
+            recipe=recipe
+        )
+        if favorite.exists():
+            favorite.delete()
+            return Response(
+                'Рецепт успешно удален из избранного',
+                status=status.HTTP_204_NO_CONTENT
+            )
+        return Response(
+            'Рецепт не найден в избранном',
             status=status.HTTP_400_BAD_REQUEST
         )
