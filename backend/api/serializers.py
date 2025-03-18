@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework.fields import CurrentUserDefault
 
 from recipes.models import (
     Tag,
@@ -92,13 +93,15 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return RecipeFavorites.objects.filter(user=request.user).exists()
+        return RecipeFavorites.objects.filter(
+            user=request.user, recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return RecipeShoppingCart.objects.filter(user=request.user).exists()
+        return RecipeShoppingCart.objects.filter(
+            user=request.user, recipe=obj).exists()
 
     def create(self, validated_data):
         ingredients = validated_data.pop('recipeingredient_set')
@@ -139,11 +142,12 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeFavoriteSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='recipe.name', required=False)
-    image = serializers.ImageField(source='recipe.image', required=False)
-    cooking_time = serializers.IntegerField(
-        source='recipe.cooking_time', required=False)
+    user = serializers.HiddenField(default=CurrentUserDefault())
+    name = serializers.ReadOnlyField(source='recipe.name')
+    id = serializers.ReadOnlyField(source='recipe.id')
+    image = serializers.ImageField(source='recipe.image', read_only=True)
+    cooking_time = serializers.ReadOnlyField(source='recipe.cooking_time')
 
     class Meta:
         model = RecipeFavorites
-        fields = ('id', 'name', 'image', 'cooking_time')
+        fields = ('id', 'user', 'name', 'image', 'cooking_time')

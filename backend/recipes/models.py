@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import UniqueConstraint
 
 from core.constants import (
     MAX_LENGTH_TAG,
@@ -129,8 +130,18 @@ class RecipeFavorites(models.Model):
         on_delete=models.CASCADE
     )
 
+    class Meta:
+        verbose_name = 'Избранный рецепт'
+        verbose_name_plural = 'Избранные рецепты'
+        ordering = ('id',)
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_favorite')
+        ]
+
     def __str__(self):
-        return self.recipe
+        return self.recipe.name
 
 
 class RecipeShoppingCart(models.Model):
@@ -145,5 +156,15 @@ class RecipeShoppingCart(models.Model):
         on_delete=models.CASCADE
     )
 
+    class Meta:
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Список покупок'
+        ordering = ('id',)
+        constraints = [
+            UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_shopping_cart')
+        ]
+
     def __str__(self):
-        return self.recipe
+        return self.recipe.name

@@ -7,6 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.models import Subscription
+from api.mixins import CreateDeleteViewSet
 from .serializers import CustomUserSerialier, UserSubscribeSerializer
 
 
@@ -24,7 +25,7 @@ class CustomUserViewSet(UserViewSet):
         return self.queryset
 
 
-class UserSubscribeViewSet(viewsets.ModelViewSet):
+class UserSubscribeViewSet(CreateDeleteViewSet):
     queryset = Subscription.objects.all()
     serializer_class = UserSubscribeSerializer
     permission_classes = [IsAuthenticated]

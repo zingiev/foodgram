@@ -13,7 +13,7 @@ from recipes.models import Recipes
 User = get_user_model()
 
 
-def get_is_subscribed(request, obj):
+def is_subscribed(request, obj):
     if not request or not request.user.is_authenticated:
         return False
     return Subscription.objects.filter(
@@ -43,7 +43,7 @@ class CustomUserSerialier(UserSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        return get_is_subscribed(request, obj)
+        return is_subscribed(request, obj)
 
 
 class RecipeMinifiedSerializer(serializers.ModelSerializer):
@@ -73,7 +73,7 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        return get_is_subscribed(request, obj)
+        return is_subscribed(request, obj)
 
     def get_recipes(self, obj):
         recipes = Recipes.objects.filter(author=obj.author)
