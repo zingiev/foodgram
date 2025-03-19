@@ -4,7 +4,7 @@ from rest_framework import viewsets, views, status
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404, redirect
 from django.conf import settings
 
@@ -31,7 +31,7 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     http_method_names = ['get']
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny]
     pagination_class = TagPagination
 
 
@@ -39,14 +39,14 @@ class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientSerializer
     http_method_names = ['get']
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny]
     pagination_class = IngredientPagination
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny]
     http_method_names = ['get', 'post', 'delete', 'patch']
     pagination_class = PageNumberPagination
 
@@ -87,8 +87,10 @@ class RedirectRecipeShortLinkView(views.APIView):
 class RecipeFavoriteViewSet(ShoppingFavoriteViewSet):
     queryset = RecipeFavorites.objects.all()
     serializer_class = RecipeFavoriteSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class RecipeShoppingCartViewSet(ShoppingFavoriteViewSet):
     queryset = RecipeShoppingCart.objects.all()
     serializer_class = RecipeShoppingCartSerializer
+    permission_classes = [IsAuthenticated]
