@@ -22,6 +22,7 @@ class Tag(models.Model):
         unique=True
     )
     slug = models.SlugField(
+        verbose_name='Слаг',
         max_length=MAX_LENGTH_SLUG,
         unique=True)
 
@@ -67,12 +68,13 @@ class Recipes(models.Model):
         verbose_name='Картинка',
         upload_to='recipes/'
     )
-    text = models.TextField()
+    text = models.TextField(verbose_name='Описание')
     ingredients = models.ManyToManyField(
+        verbose_name='Ингредиенты',
         to=Ingredients,
         through='RecipeIngredient'
     )
-    tags = models.ManyToManyField(to=Tag)
+    tags = models.ManyToManyField(verbose_name='Теги', to=Tag)
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время приготовления'
     )
@@ -100,6 +102,13 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name='Сумма'
     )
+    
+    class Meta:
+        verbose_name = 'Ингредиент для рецепта'
+        verbose_name_plural = 'Ингредиенты для рецептов'
+        
+    def __str__(self):
+        return self.ingredient.name
 
 
 class ShortLink(models.Model):
