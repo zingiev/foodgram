@@ -1,6 +1,6 @@
 from hashlib import md5
 
-from rest_framework import viewsets, views, status
+from rest_framework import viewsets, views, status, filters
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
@@ -41,6 +41,8 @@ class IngredientViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
     permission_classes = [AllowAny]
     pagination_class = IngredientPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name', 'name')
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
