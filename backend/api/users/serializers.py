@@ -1,10 +1,12 @@
 from django.contrib.auth import get_user_model
+from rest_framework.fields import CurrentUserDefault
 from djoser.serializers import (
     UserCreateSerializer,
     UserSerializer
 )
 from rest_framework import serializers
 
+from core.decodeimage import Base64ImageField
 from api.validators import username_by_path_me, username_by_pattern
 from users.models import Subscription
 from recipes.models import Recipes
@@ -82,3 +84,12 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return Recipes.objects.filter(author=obj.author).count()
+
+
+class UserAvatarSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=CurrentUserDefault())
+    avatar = Base64ImageField(required=False, allow_null=True)
+    
+    class Meta:
+        model = User
+        fields = ('user', 'avatar')
