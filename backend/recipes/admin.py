@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import Recipes, Tag, Ingredients, RecipeIngredient
+from .models import Recipe, Tag, Ingredients, RecipeIngredient
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -9,8 +9,8 @@ class RecipeIngredientInline(admin.TabularInline):
     extra = 0
 
 
-@admin.register(Recipes)
-class RecipesAdmin(admin.ModelAdmin):
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author')
     readonly_fields = ('favorite_count',)
     search_fields = ('author', 'name')

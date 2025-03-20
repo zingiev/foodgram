@@ -5,9 +5,9 @@ from .views import (
     TagViewSet,
     RecipeViewSet,
     IngredientViewSet,
-    RecipeShortLinkView,
-    RecipeFavoriteViewSet,
-    RecipeShoppingCartViewSet
+    ShortLinkView,
+    FavoriteViewSet,
+    ShoppingCartViewSet
 )
 from .users.views import (
     CustomUserViewSet,
@@ -33,12 +33,12 @@ v1_router.register('ingredients', IngredientViewSet, basename='ingredients')
 v1_router.register('recipes', RecipeViewSet, basename='recipes')
 v1_router.register(
     r'recipes/(?P<recipe_id>\d+)/favorite',
-    RecipeFavoriteViewSet,
+    FavoriteViewSet,
     basename='recipe_favorite'
 )
 v1_router.register(
     r'recipes/(?P<recipe_id>\d+)/shopping_cart',
-    RecipeShoppingCartViewSet,
+    ShoppingCartViewSet,
     basename='recipe_shopping_cart'
 )
 
@@ -48,7 +48,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path(
         'recipes/<int:id>/get-link/',
-        RecipeShortLinkView.as_view(),
+        ShortLinkView.as_view(),
         name='get_link'
     )
 ]

@@ -9,7 +9,7 @@ from rest_framework import serializers
 from core.decodeimage import Base64ImageField
 from api.validators import username_by_path_me, username_by_pattern
 from users.models import Subscription
-from recipes.models import Recipes
+from recipes.models import Recipe
 
 
 User = get_user_model()
@@ -51,7 +51,7 @@ class CustomUserSerialier(UserSerializer):
 class RecipeMinifiedSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
@@ -78,12 +78,12 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
         return is_subscribed(request, obj)
 
     def get_recipes(self, obj):
-        recipes = Recipes.objects.filter(author=obj.author)
+        recipes = Recipe.objects.filter(author=obj.author)
         return RecipeMinifiedSerializer(
             recipes, many=True, context=self.context).data
 
     def get_recipes_count(self, obj):
-        return Recipes.objects.filter(author=obj.author).count()
+        return Recipe.objects.filter(author=obj.author).count()
 
 
 class UserAvatarSerializer(serializers.ModelSerializer):

@@ -4,11 +4,11 @@ from rest_framework.fields import CurrentUserDefault
 
 from recipes.models import (
     Tag,
-    Recipes,
+    Recipe,
     Ingredients,
     RecipeIngredient,
-    RecipeFavorites,
-    RecipeShoppingCart,
+    Favorite,
+    ShoppingCart,
 )
 from users.models import Subscription
 from core.decodeimage import Base64ImageField
@@ -84,7 +84,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = ('id', 'tags', 'ingredients', 'author',
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
@@ -93,20 +93,20 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return RecipeFavorites.objects.filter(
+        return Favorite.objects.filter(
             user=request.user, recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if not request or not request.user.is_authenticated:
             return False
-        return RecipeShoppingCart.objects.filter(
+        return ShoppingCart.objects.filter(
             user=request.user, recipe=obj).exists()
 
     def create(self, validated_data):
         ingredients = validated_data.pop('recipeingredient_set')
         tags = self.initial_data.get('tags')
-        recipe = Recipes.objects.create(**validated_data)
+        recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
             RecipeIngredient.objects.create(
@@ -149,13 +149,13 @@ class RecipeMinifiedSerializer(serializers.Serializer):
     cooking_time = serializers.ReadOnlyField(source='recipe.cooking_time')
 
 
-class RecipeFavoriteSerializer(RecipeMinifiedSerializer):
+class FavoriteSerializer(RecipeMinifiedSerializer):
     class Meta:
-        model = RecipeFavorites
+        model = Favorite
         fields = ('id', 'user', 'name', 'image', 'cooking_time')
 
 
-class RecipeShoppingCartSerializer(RecipeMinifiedSerializer):
+class ShoppingCartSerializer(RecipeMinifiedSerializer):
     class Meta:
-        model = RecipeShoppingCart
+        model = ShoppingCart
         fields = ('id', 'user', 'name', 'image', 'cooking_time')

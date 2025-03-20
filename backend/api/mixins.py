@@ -3,7 +3,7 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response 
 from rest_framework.permissions import IsAuthenticated
 
-from recipes.models import Recipes
+from recipes.models import Recipe
 
 
 class CreateDeleteViewSet(
@@ -23,7 +23,7 @@ class ShoppingFavoriteViewSet(
 
     def create(self, request, **kwargs):
         recipe_id = kwargs.get('recipe_id')
-        recipe = get_object_or_404(Recipes, pk=recipe_id)
+        recipe = get_object_or_404(Recipe, pk=recipe_id)
         favorite, created = self.queryset.get_or_create(
             user=request.user, recipe=recipe)
         serializer = self.get_serializer(favorite)

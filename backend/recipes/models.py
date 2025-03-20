@@ -54,11 +54,12 @@ class Ingredients(models.Model):
         return self.name
 
 
-class Recipes(models.Model):
+class Recipe(models.Model):
     author = models.ForeignKey(
         verbose_name='Автор',
         to=User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='recipes'
     )
     name = models.CharField(
         verbose_name='Название',
@@ -94,7 +95,7 @@ class Recipes(models.Model):
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         verbose_name='Рецепт',
-        to=Recipes,
+        to=Recipe,
         on_delete=models.CASCADE
     )
     ingredient = models.ForeignKey(
@@ -117,7 +118,7 @@ class RecipeIngredient(models.Model):
 class ShortLink(models.Model):
     recipe = models.ForeignKey(
         verbose_name='Рецепт',
-        to=Recipes,
+        to=Recipe,
         on_delete=models.CASCADE,
         related_name='short_link'
     )
@@ -130,7 +131,7 @@ class ShortLink(models.Model):
         return f'{self.recipe, self.short_code}'
 
 
-class RecipeFavorites(models.Model):
+class Favorite(models.Model):
     user = models.ForeignKey(
         verbose_name='Пользователь',
         to=User,
@@ -138,7 +139,7 @@ class RecipeFavorites(models.Model):
     )
     recipe = models.ForeignKey(
         verbose_name='Рецепт',
-        to=Recipes,
+        to=Recipe,
         on_delete=models.CASCADE
     )
 
@@ -156,7 +157,7 @@ class RecipeFavorites(models.Model):
         return self.recipe.name
 
 
-class RecipeShoppingCart(models.Model):
+class ShoppingCart(models.Model):
     user = models.ForeignKey(
         verbose_name='Пользователь',
         to=User,
@@ -164,7 +165,7 @@ class RecipeShoppingCart(models.Model):
     )
     recipe = models.ForeignKey(
         verbose_name='Рецепт',
-        to=Recipes,
+        to=Recipe,
         on_delete=models.CASCADE
     )
 
