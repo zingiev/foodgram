@@ -46,7 +46,7 @@ class CustomUserViewSet(UserViewSet):
         return Response(serializer.data)
 
 
-class UserSubscribeViewSet(CreateDeleteViewSet):
+class UserSubscribeViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = UserSubscribeSerializer
     permission_classes = [IsAuthenticated]

@@ -7,3 +7,4 @@ flake8==7.1.2
 gunicorn==23.0.0
 dotenv==0.9.9
 psycopg2-binary==2.9.3
+django-filter==25.1

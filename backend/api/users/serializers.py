@@ -16,10 +16,12 @@ User = get_user_model()
 
 
 def is_subscribed(request, obj):
+    if isinstance(obj, Subscription):
+        obj = obj.author
     if not request or not request.user.is_authenticated:
         return False
     return Subscription.objects.filter(
-        author=request.user, user=obj).exists()
+        author=obj, user=request.user).exists()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):

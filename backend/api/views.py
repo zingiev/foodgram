@@ -7,6 +7,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404, redirect
 from django.conf import settings
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import RecipeFilter
 
 from .pagination import TagPagination, IngredientPagination
 from .mixins import ShoppingFavoriteViewSet
@@ -51,6 +53,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     http_method_names = ['get', 'post', 'delete', 'patch']
     pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('author', 'tags')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -64,6 +68,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class ShortLinkView(views.APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request, id):
         recipe = Recipe.objects.filter(id=id).first()
         if not recipe:
@@ -80,7 +86,9 @@ class ShortLinkView(views.APIView):
         return Response({'short-link': short_link})
 
 
-class RedirectShortLinkView(views.APIView):
+class ShortLinkView(views.APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request, short_code):
         short_link = get_object_or_404(ShortLink, short_code=short_code)
         return redirect(f'{settings.SITE_URL}/api/recipes/{short_link.recipe.id}')

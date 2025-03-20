@@ -41,4 +41,5 @@ class Subscription(models.Model):
     )
     
     class Meta:
+        ordering = ('id',)
         unique_together = ('user', 'author')
