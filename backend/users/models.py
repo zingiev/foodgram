@@ -14,9 +14,12 @@ class User(AbstractUser):
     )
     avatar = models.ImageField(
         verbose_name='Аватар',
-        upload_to='users/avatar/',
+        upload_to='avatars/',
         blank=True, null=True
     )
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
     
     class Meta:
         verbose_name = 'Пользователь'

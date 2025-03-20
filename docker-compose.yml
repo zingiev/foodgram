@@ -9,7 +9,7 @@ services:
   db:
     image: postgres:13
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - ./backend/db.sqlite3:/app/db.sqlite3
     env_file: .env
   backend:
     build: ./backend/
@@ -35,4 +35,4 @@ services:
       - 8000:80
     volumes:
       - static:/static
-      - media:/media
+      - media:/app/media
