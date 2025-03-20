@@ -11,8 +11,7 @@ from .views import (
 )
 from .users.views import (
     CustomUserViewSet,
-    UserSubscribeViewSet,
-    UserAvatarViewSet
+    UserSubscribeViewSet
 )
 
 
@@ -21,7 +20,6 @@ app_name = 'api'
 v1_router = routers.DefaultRouter()
 v1_router.register('users/subscriptions',
                    UserSubscribeViewSet, basename='user_subscriptions')
-# v1_router.register('users/me/avatar', UserAvatarViewSet, basename='user_avatar')
 v1_router.register('users', CustomUserViewSet, basename='name')
 v1_router.register(
     r'users/(?P<author_id>\d+)/subscribe',
