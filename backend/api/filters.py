@@ -16,12 +16,11 @@ class RecipeFilter(filters.FilterSet):
         fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
         
     def filter_tags(self, queryset, name, value):
-        tag_slugs = self.request.GET.getlist('tags')  # Получаем список значений tags
+        tag_slugs = self.request.GET.getlist('tags')
 
         if not tag_slugs:
             return queryset
 
-        # Фильтрация через Q (ИЛИ)
         query = Q()
         for slug in tag_slugs:
             query |= Q(tags__slug=slug)
