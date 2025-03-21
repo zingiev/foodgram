@@ -184,4 +184,4 @@ DJOSER = {
     }
 }
 
-SITE_URL = 'http://localhost:9000'
+SITE_URL = 'http://localhost:8000'

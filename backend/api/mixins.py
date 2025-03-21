@@ -6,14 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from recipes.models import Recipe
 
 
-class CreateDeleteViewSet(
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
-):
-    pass
-
-
 class ShoppingFavoriteViewSet(
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,

@@ -51,6 +51,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     http_method_names = ['get', 'post', 'delete', 'patch']
     pagination_class = PageNumberPagination
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -64,6 +69,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class ShortLinkView(views.APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request, id):
         recipe = Recipe.objects.filter(id=id).first()
         if not recipe:
@@ -81,6 +88,8 @@ class ShortLinkView(views.APIView):
 
 
 class RedirectShortLinkView(views.APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request, short_code):
         short_link = get_object_or_404(ShortLink, short_code=short_code)
         return redirect(f'{settings.SITE_URL}/api/recipes/{short_link.recipe.id}')

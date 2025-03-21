@@ -9,7 +9,6 @@ from rest_framework.decorators import action
 
 from core.constants import URL_PATH_AVATAR
 from users.models import Subscription
-from api.mixins import CreateDeleteViewSet
 from .serializers import (
     CustomUserSerialier,
     UserSubscribeSerializer,
@@ -46,7 +45,7 @@ class CustomUserViewSet(UserViewSet):
         return Response(serializer.data)
 
 
-class UserSubscribeViewSet(CreateDeleteViewSet):
+class UserSubscribeViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = UserSubscribeSerializer
     permission_classes = [IsAuthenticated]
