@@ -66,13 +66,14 @@ class UserSubscribeViewSet(viewsets.ModelViewSet):
     def create(self, request, **kwargs):
         author, subscribe = self.get_subscribe(request, kwargs)
         if not subscribe.exists() and author != request.user:
-            subscribe.create(author=author, user=request.user)
-            return Response(status=status.HTTP_201_CREATED)
+            author = subscribe.create(author=author, user=request.user)
+            serializer = self.get_serializer(author)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, **kwargs):
         author, subscribe = self.get_subscribe(request, kwargs)
         if subscribe.exists():
             subscribe.delete()
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)

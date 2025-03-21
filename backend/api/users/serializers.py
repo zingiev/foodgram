@@ -91,7 +91,7 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
 class UserAvatarSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=CurrentUserDefault())
     avatar = Base64ImageField(required=False, allow_null=True)
-    
+
     class Meta:
         model = User
         fields = ('user', 'avatar')
