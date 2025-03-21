@@ -1,22 +1,21 @@
 from hashlib import md5
 
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, views, status, filters
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.shortcuts import get_object_or_404, redirect
-from django.conf import settings
-from django_filters.rest_framework import DjangoFilterBackend
-from .filters import RecipeFilter
 
+from .filters import RecipeFilter
 from .pagination import TagPagination, IngredientPagination
 from .mixins import ShoppingFavoriteViewSet
 from recipes.models import (
     Tag,
     Recipe,
     Ingredients,
-    ShortLink,
     Favorite,
     ShoppingCart
 )
@@ -26,7 +25,6 @@ from .serializers import (
     IngredientSerializer,
     FavoriteSerializer,
     ShoppingCartSerializer,
-    ShortLinkSerializer,
 )
 
 
@@ -68,39 +66,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 
-class ShortLinkView(views.APIView):
-    permission_classes = [AllowAny]
-    
-    def get(self, request, recipe_id):
-        recipe = get_object_or_404(Recipe, pk=recipe_id)
-        serializer = ShortLinkSerializer(
-            recipe, context={"request": request})
-        return Response(serializer.data)
-
-    # def get(self, request, recipe_id):
-    #     recipe = Recipe.objects.filter(id=recipe_id).first()
-    #     if not recipe:
-    #         return Response(
-    #             {'detail': 'Страница не найдена.'},
-    #             status=status.HTTP_404_NOT_FOUND
-    #         )
-    #     unique_string = f'recipe-{recipe.id}'
-    #     short_hash = md5(unique_string.encode()).hexdigest()[:6]
-    #     short_code = ShortLink.objects.get_or_create(
-    #         recipe=recipe, short_code=short_hash
-    #     )[0].short_code
-    #     short_link = f'{settings.SITE_URL}/s/{short_code}'
-    #     return Response({'short-link': short_link})
-
-
-class RedirectShortLinkView(views.APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, short_code):
-        short_link = get_object_or_404(ShortLink, short_code=short_code)
-        return redirect('recipe', pk=short_link.recipe.id)
-
-
 class FavoriteViewSet(ShoppingFavoriteViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
@@ -111,3 +76,20 @@ class ShoppingCartViewSet(ShoppingFavoriteViewSet):
     queryset = ShoppingCart.objects.all()
     serializer_class = ShoppingCartSerializer
     permission_classes = [IsAuthenticated]
+
+
+class ShortLinkView(views.APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, recipe_id):
+        recipe = get_object_or_404(Recipe, pk=recipe_id)
+        short_link = f'{settings.BACKEND_URL}/s/{recipe.short_url}'
+        return Response({'short-link': short_link}, status=status.HTTP_200_OK)
+
+
+class RedirectShortLinkView(views.APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, short_url):
+        recipe = get_object_or_404(Recipe, short_url=short_url)
+        return redirect(f'{settings.FRONTEND_URL}/recipes/{recipe.id}')

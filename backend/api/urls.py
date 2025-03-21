@@ -30,7 +30,7 @@ v1_router.register(
 v1_router.register('tags', TagViewSet, basename='tags')
 v1_router.register('ingredients', IngredientViewSet, basename='ingredients')
 
-v1_router.register('recipes', RecipeViewSet, basename='recipes')
+v1_router.register('recipes', RecipeViewSet, basename='recipe')
 v1_router.register(
     r'recipes/(?P<recipe_id>\d+)/favorite',
     FavoriteViewSet,

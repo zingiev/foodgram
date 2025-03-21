@@ -159,13 +159,11 @@ class ShoppingCartSerializer(RecipeMinifiedSerializer):
         fields = ('id', 'user', 'name', 'image', 'cooking_time')
 
 
-class ShortLinkSerializer(serializers.ModelSerializer):
-    url = serializers.SerializerMethodField()
-    
+class ShortLinkSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='recipe-detail', lookup_field='id'
+    )
+
     class Meta:
         model = Recipe
         fields = ('url',)
-        
-    def get_url(self, obj):
-        request = self.context.get('request')
-        return request.build_absolute_uri(obj.get_absolute_url())

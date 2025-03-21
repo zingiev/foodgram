@@ -24,7 +24,7 @@ from api.views import RedirectShortLinkView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('s/<str:short_code>/',
+    path('s/<str:short_url>/',
          RedirectShortLinkView.as_view(),
          name='redirect_short_link'
          ),

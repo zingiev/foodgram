@@ -1,3 +1,4 @@
+from shortuuid import ShortUUID
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
@@ -9,7 +10,7 @@ from core.constants import (
     MAX_LENGTH_MEASUREMENT_UNIT,
     MAX_LENGTH_RECIPES,
     MAX_LENGTH_SLUG,
-    MAX_LENGTH_SHORT_CODE
+    MAX_LENGTH_SHORT_URL
 )
 
 
@@ -83,6 +84,10 @@ class Recipe(models.Model):
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True)
+    short_url = models.CharField(
+        max_length=MAX_LENGTH_SHORT_URL,
+        unique=True, blank=True
+    )
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -91,9 +96,11 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-    
-    def get_absolute_url(self):
-        return reverse("get_link", kwargs={"pk": self.pk})
+
+    def save(self, *args, **kwargs):
+        if not self.short_url:
+            self.short_url = ShortUUID().random(length=6).lower()
+        super().save(*args, **kwargs)
 
 
 class RecipeIngredient(models.Model):
@@ -110,29 +117,13 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name='Сумма'
     )
-    
+
     class Meta:
         verbose_name = 'Ингредиент для рецепта'
         verbose_name_plural = 'Ингредиенты для рецептов'
-        
+
     def __str__(self):
         return self.ingredient.name
-
-
-class ShortLink(models.Model):
-    recipe = models.ForeignKey(
-        verbose_name='Рецепт',
-        to=Recipe,
-        on_delete=models.CASCADE,
-        related_name='short_link'
-    )
-    short_code = models.CharField(
-        max_length=MAX_LENGTH_SHORT_CODE,
-        unique=True
-    )
-
-    def __str__(self):
-        return f'{self.recipe.name, self.short_code}'
 
 
 class Favorite(models.Model):
