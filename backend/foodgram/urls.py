@@ -19,13 +19,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from api.views import RedirectShortLinkView
+from api.views import ShortLinkView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('s/<str:short_code>/',
-         RedirectShortLinkView.as_view(),
+         ShortLinkView.as_view(),
          name='redirect_short_link'
          ),
 ]
