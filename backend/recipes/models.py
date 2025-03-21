@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
+from django.urls import reverse
 
 from core.constants import (
     MAX_LENGTH_TAG,
@@ -90,6 +91,9 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("get_link", kwargs={"pk": self.pk})
 
 
 class RecipeIngredient(models.Model):
@@ -128,7 +132,7 @@ class ShortLink(models.Model):
     )
 
     def __str__(self):
-        return f'{self.recipe, self.short_code}'
+        return f'{self.recipe.name, self.short_code}'
 
 
 class Favorite(models.Model):

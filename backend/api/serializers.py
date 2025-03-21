@@ -91,13 +91,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-        if request or request.user.is_authenticated:
+        if request and request.user.is_authenticated:
             return obj.favorite_set.filter(user=request.user).exists()
         return False
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if request or request.user.is_authenticated:
+        if request and request.user.is_authenticated:
             return obj.shoppingcart_set.filter(user=request.user).exists()
         return False
 
@@ -157,3 +157,15 @@ class ShoppingCartSerializer(RecipeMinifiedSerializer):
     class Meta:
         model = ShoppingCart
         fields = ('id', 'user', 'name', 'image', 'cooking_time')
+
+
+class ShortLinkSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Recipe
+        fields = ('url',)
+        
+    def get_url(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.get_absolute_url())

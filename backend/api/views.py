@@ -25,7 +25,8 @@ from .serializers import (
     RecipeSerializer,
     IngredientSerializer,
     FavoriteSerializer,
-    ShoppingCartSerializer
+    ShoppingCartSerializer,
+    ShortLinkSerializer,
 )
 
 
@@ -69,29 +70,35 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 class ShortLinkView(views.APIView):
     permission_classes = [AllowAny]
+    
+    def get(self, request, recipe_id):
+        recipe = get_object_or_404(Recipe, pk=recipe_id)
+        serializer = ShortLinkSerializer(
+            recipe, context={"request": request})
+        return Response(serializer.data)
 
-    def get(self, request, id):
-        recipe = Recipe.objects.filter(id=id).first()
-        if not recipe:
-            return Response(
-                {'detail': 'Страница не найдена.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        unique_string = f'recipe-{recipe.id}'
-        short_hash = md5(unique_string.encode()).hexdigest()[:6]
-        short_code = ShortLink.objects.get_or_create(
-            recipe=recipe, short_code=short_hash
-        )[0].short_code
-        short_link = f'{settings.SITE_URL}/s/{short_code}'
-        return Response({'short-link': short_link})
+    # def get(self, request, recipe_id):
+    #     recipe = Recipe.objects.filter(id=recipe_id).first()
+    #     if not recipe:
+    #         return Response(
+    #             {'detail': 'Страница не найдена.'},
+    #             status=status.HTTP_404_NOT_FOUND
+    #         )
+    #     unique_string = f'recipe-{recipe.id}'
+    #     short_hash = md5(unique_string.encode()).hexdigest()[:6]
+    #     short_code = ShortLink.objects.get_or_create(
+    #         recipe=recipe, short_code=short_hash
+    #     )[0].short_code
+    #     short_link = f'{settings.SITE_URL}/s/{short_code}'
+    #     return Response({'short-link': short_link})
 
 
-class ShortLinkView(views.APIView):
+class RedirectShortLinkView(views.APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, short_code):
         short_link = get_object_or_404(ShortLink, short_code=short_code)
-        return redirect(f'{settings.SITE_URL}/api/recipes/{short_link.recipe.id}')
+        return redirect('recipe', pk=short_link.recipe.id)
 
 
 class FavoriteViewSet(ShoppingFavoriteViewSet):

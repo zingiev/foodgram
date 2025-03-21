@@ -185,7 +185,7 @@ DJOSER = {
     }
 }
 
-SITE_URL = 'http://localhost:8000'
+SITE_URL = 'http://localhost:3000'
 
 
 CORS_ALLOWED_ORIGINS = [

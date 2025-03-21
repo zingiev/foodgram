@@ -47,7 +47,7 @@ urlpatterns = [
     path('', include(v1_router.urls)),
     path('auth/', include('djoser.urls.authtoken')),
     path(
-        'recipes/<int:id>/get-link/',
+        'recipes/<int:recipe_id>/get-link/',
         ShortLinkView.as_view(),
         name='get_link'
     )
