@@ -62,6 +62,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         query = Q()
         for slug in tag_slugs:
             query |= Q(tags__slug=slug)
+        print(self.queryset.filter(query))
         return self.queryset.filter(query).distinct()
 
     def perform_create(self, serializer):

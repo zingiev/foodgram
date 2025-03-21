@@ -15,17 +15,17 @@ class RecipeFilter(filters.FilterSet):
         model = Recipe
         fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
         
-    def filter_tags(self, queryset, name, value):
-        tag_slugs = self.request.GET.getlist('tags')
+    # def filter_tags(self, queryset, name, value):
+    #     tag_slugs = self.request.GET.getlist('tags')
 
-        if not tag_slugs:
-            return queryset
+    #     if not tag_slugs:
+    #         return queryset
 
-        query = Q()
-        for slug in tag_slugs:
-            query |= Q(tags__slug=slug)
+    #     query = Q()
+    #     for slug in tag_slugs:
+    #         query |= Q(tags__slug=slug)
 
-        return queryset.filter(query).distinct()
+    #     return queryset.filter(query).distinct()
 
     def filter_is_favorited(self, queryset, name, value):
         user = self.request.user
