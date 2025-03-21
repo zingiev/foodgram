@@ -2,7 +2,6 @@ from shortuuid import ShortUUID
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
-from django.urls import reverse
 
 from core.constants import (
     MAX_LENGTH_TAG,
