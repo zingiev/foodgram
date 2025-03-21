@@ -91,17 +91,15 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-        if not request or not request.user.is_authenticated:
-            return False
-        return Favorite.objects.filter(
-            user=request.user, recipe=obj).exists()
+        if request or request.user.is_authenticated:
+            return obj.favorite_set.filter(user=request.user).exists()
+        return False
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if not request or not request.user.is_authenticated:
-            return False
-        return ShoppingCart.objects.filter(
-            user=request.user, recipe=obj).exists()
+        if request or request.user.is_authenticated:
+            return obj.shoppingcart_set.filter(user=request.user).exists()
+        return False
 
     def create(self, validated_data):
         ingredients = validated_data.pop('recipeingredient_set')
