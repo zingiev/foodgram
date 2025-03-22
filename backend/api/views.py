@@ -93,3 +93,13 @@ class RedirectShortLinkView(views.APIView):
     def get(self, request, short_url):
         recipe = get_object_or_404(Recipe, short_url=short_url)
         return redirect(f'{settings.FRONTEND_URL}/recipes/{recipe.id}')
+
+
+class DownloadShoppingCartViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+        shopping_cart = ShoppingCart.objects.filter(
+            user=user).select_related('recipe')
+        
