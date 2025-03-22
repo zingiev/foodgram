@@ -45,7 +45,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name', 'name')
 
-from django.db.models import Q
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
@@ -54,16 +54,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    
-    def get_queryset(self):
-        tag_slugs = self.request.GET.getlist('tags')
-        if not tag_slugs:
-            return self.queryset
-        query = Q()
-        for slug in tag_slugs:
-            query |= Q(tags__slug=slug)
-        print(self.queryset.filter(query))
-        return self.queryset.filter(query).distinct()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
