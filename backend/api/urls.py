@@ -7,8 +7,7 @@ from .views import (
     IngredientViewSet,
     ShortLinkView,
     FavoriteViewSet,
-    ShoppingCartViewSet,
-    DownloadShoppingCartViewSet
+    ShoppingCartViewSet
 )
 from .users.views import (
     CustomUserViewSet,
@@ -27,10 +26,6 @@ v1_router.register(r'users/(?P<author_id>\d+)/subscribe',
 
 v1_router.register('tags', TagViewSet, basename='tags')
 v1_router.register('ingredients', IngredientViewSet, basename='ingredients')
-
-v1_router.register('recipes/download_shpping_cart',
-                   DownloadShoppingCartViewSet,
-                   basename='shppping_cart_download')
 
 v1_router.register('recipes', RecipeViewSet, basename='recipe')
 
