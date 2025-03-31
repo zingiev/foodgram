@@ -62,7 +62,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(methods=['GET'],
             detail=False,
-            url_path=URL_PATH_DOWNLOAD_SHOPPING_CART)
+            url_path=URL_PATH_DOWNLOAD_SHOPPING_CART,
+            permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         user = request.user
         shopping_cart = ShoppingCart.objects.filter(
