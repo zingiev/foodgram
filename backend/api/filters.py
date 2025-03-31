@@ -1,6 +1,7 @@
 from django.db.models import Exists, OuterRef
 from django_filters import rest_framework as filters
 from django.db.models import Q
+from rest_framework.filters import SearchFilter
 
 from recipes.models import Recipe, ShoppingCart, Favorite
 
@@ -19,10 +20,7 @@ class RecipeFilter(filters.FilterSet):
         tag_slugs = self.request.GET.getlist('tags')
         if not tag_slugs:
             return queryset
-        query = Q()
-        for slug in tag_slugs:
-            query |= Q(tags__slug=slug)
-        return queryset.filter(query).distinct()
+        return queryset.filter(tags__slug__in=tag_slugs).distinct()
 
     def filter_is_favorited(self, queryset, name, value):
         user = self.request.user
@@ -43,3 +41,7 @@ class RecipeFilter(filters.FilterSet):
                 )
             ).filter(in_cart=True)
         return queryset
+
+
+class IngredientsSearchFilter(SearchFilter):
+    search_param = 'name'

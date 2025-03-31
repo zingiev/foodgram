@@ -5,14 +5,14 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, views, status, filters
+from rest_framework import viewsets, views, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .filters import RecipeFilter
+from .filters import RecipeFilter, IngredientsSearchFilter
 from .pagination import TagPagination, IngredientPagination
 from .mixins import ShoppingFavoriteViewSet
 from core.constants import URL_PATH_DOWNLOAD_SHOPPING_CART
@@ -47,7 +47,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
     permission_classes = [AllowAny]
     pagination_class = IngredientPagination
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (IngredientsSearchFilter,)
     search_fields = ('^name', 'name')
 
 
