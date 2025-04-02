@@ -9,7 +9,7 @@ services:
   db:
     image: postgres:13
     volumes:
-      - ./backend/db.sqlite3:/app/db.sqlite3
+      - pg_data:/var/lib/postgres/data
     env_file: .env
   backend:
     build: ./backend/
