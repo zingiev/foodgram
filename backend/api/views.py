@@ -1,36 +1,25 @@
-from hashlib import md5
 from collections import defaultdict
 
+from core.constants import URL_PATH_DOWNLOAD_SHOPPING_CART
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, views, status
-from rest_framework.response import Response
+from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
+from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
-from .filters import RecipeFilter, IngredientsSearchFilter
-from .pagination import TagPagination, IngredientPagination
+from .filters import IngredientsSearchFilter, RecipeFilter
 from .mixins import ShoppingFavoriteViewSet
-from core.constants import URL_PATH_DOWNLOAD_SHOPPING_CART
-from recipes.models import (
-    Tag,
-    Recipe,
-    Ingredients,
-    Favorite,
-    ShoppingCart,
-    RecipeIngredient
-)
-from .serializers import (
-    TagSerializer,
-    RecipeSerializer,
-    IngredientSerializer,
-    FavoriteSerializer,
-    ShoppingCartSerializer,
-)
+from .pagination import IngredientPagination, TagPagination
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipeSerializer, ShoppingCartSerializer,
+                          TagSerializer)
 
 
 class TagViewSet(viewsets.ModelViewSet):

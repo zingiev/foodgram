@@ -1,19 +1,12 @@
-from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from rest_framework.fields import CurrentUserDefault
-
-from recipes.models import (
-    Tag,
-    Recipe,
-    Ingredients,
-    RecipeIngredient,
-    Favorite,
-    ShoppingCart,
-)
-from users.models import Subscription
 from core.decodeimage import Base64ImageField
-from .validators import slug_by_pattern
+from django.contrib.auth import get_user_model
+from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
+from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
+from users.models import Subscription
 
+from .validators import slug_by_pattern
 
 User = get_user_model()
 

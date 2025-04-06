@@ -1,20 +1,16 @@
+from core.constants import URL_PATH_AVATAR
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
-from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import action
-
-from core.constants import URL_PATH_AVATAR
+from rest_framework.response import Response
 from users.models import Subscription
-from .serializers import (
-    CustomUserSerialier,
-    UserSubscribeSerializer,
-    UserAvatarSerializer
-)
 
+from .serializers import (CustomUserSerialier, UserAvatarSerializer,
+                          UserSubscribeSerializer)
 
 User = get_user_model()
 

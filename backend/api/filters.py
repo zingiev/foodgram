@@ -1,9 +1,7 @@
 from django.db.models import Exists, OuterRef
 from django_filters import rest_framework as filters
-from django.db.models import Q
+from recipes.models import Favorite, Recipe, ShoppingCart
 from rest_framework.filters import SearchFilter
-
-from recipes.models import Recipe, ShoppingCart, Favorite
 
 
 class RecipeFilter(filters.FilterSet):

@@ -1,17 +1,10 @@
-from shortuuid import ShortUUID
-from django.db import models
+from core.constants import (MAX_LENGTH_INGREDIENT, MAX_LENGTH_MEASUREMENT_UNIT,
+                            MAX_LENGTH_RECIPES, MAX_LENGTH_SHORT_URL,
+                            MAX_LENGTH_SLUG, MAX_LENGTH_TAG)
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.db.models import UniqueConstraint
-
-from core.constants import (
-    MAX_LENGTH_TAG,
-    MAX_LENGTH_INGREDIENT,
-    MAX_LENGTH_MEASUREMENT_UNIT,
-    MAX_LENGTH_RECIPES,
-    MAX_LENGTH_SLUG,
-    MAX_LENGTH_SHORT_URL
-)
-
+from shortuuid import ShortUUID
 
 User = get_user_model()
 

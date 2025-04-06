@@ -1,12 +1,8 @@
 import re
 
+from core.constants import (PATTERN_TAG_SLUG, PATTERN_VALID_USERNAME,
+                            URL_PATH_ME)
 from rest_framework import serializers
-
-from core.constants import (
-    PATTERN_VALID_USERNAME,
-    URL_PATH_ME,
-    PATTERN_TAG_SLUG
-)
 
 
 def username_by_pattern(username):
