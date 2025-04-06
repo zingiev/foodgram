@@ -8,9 +8,9 @@ volumes:
 services:
   db:
     image: postgres:13
+    env_file: .env
     volumes:
       - pg_data:/var/lib/postgres/data
-    env_file: .env
   backend:
     build: ./backend/
     env_file: .env
@@ -32,7 +32,7 @@ services:
     - backend
     - frontend
     ports:
-      - 8000:80
+      - 8080:80
     volumes:
       - static:/static
       - media:/app/media
