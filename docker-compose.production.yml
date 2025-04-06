@@ -8,9 +8,9 @@ volumes:
 services:
   db:
     image: postgres:13
-    volumes:
-      - pg_data:/var/lib/postgres/data
     env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
   backend:
     image: zingiev/foodgram_backend
     env_file: .env
