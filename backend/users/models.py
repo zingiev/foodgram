@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 from core.constants import MAX_LENGTH_EMAIL
 
-# Create your models here.
+
 class User(AbstractUser):
     email = models.EmailField(
         verbose_name='Адрес электронной почты',
@@ -17,19 +17,19 @@ class User(AbstractUser):
         upload_to='avatars/',
         blank=True, null=True
     )
-    
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-    
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('id',)
-        
+
     def __str__(self):
         return self.email
 
-    
+
 class Subscription(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,
@@ -39,7 +39,7 @@ class Subscription(models.Model):
         User, on_delete=models.CASCADE,
         related_name='following'
     )
-    
+
     class Meta:
         ordering = ('id',)
         unique_together = ('user', 'author')
