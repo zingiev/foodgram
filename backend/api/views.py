@@ -108,7 +108,7 @@ class ShortLinkView(views.APIView):
 
     def get(self, request, recipe_id):
         recipe = get_object_or_404(Recipe, pk=recipe_id)
-        short_link = f'{settings.BACKEND_URL}/s/{recipe.short_url}'
+        short_link = f'{settings.SITE_URL}/s/{recipe.short_url}'
         return Response({'short-link': short_link}, status=status.HTTP_200_OK)
 
 
@@ -117,4 +117,4 @@ class RedirectShortLinkView(views.APIView):
 
     def get(self, request, short_url):
         recipe = get_object_or_404(Recipe, short_url=short_url)
-        return redirect(f'{settings.FRONTEND_URL}/recipes/{recipe.id}')
+        return redirect(f'{settings.SITE_URL}/recipes/{recipe.id}')

@@ -184,7 +184,7 @@ DJOSER = {
     }
 }
 
-SITE_URL = 'https://foodgramz.hopto.org/'
+SITE_URL = 'https://foodgramz.hopto.org'
 
 
 if not DEBUG:
