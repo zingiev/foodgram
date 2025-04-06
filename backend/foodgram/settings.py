@@ -187,7 +187,9 @@ DJOSER = {
 SITE_URL = 'https://foodgramz.hopto.org/'
 
 
-CORS_ALLOWED_ORIGINS = [
-    SITE_URL,
-]
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        'http://foodgramz.hopto.org',
+        'https://foodgramz.hopto.org'
+    ]
 CORS_URLS_REGEX = r'^/api/.*$'
