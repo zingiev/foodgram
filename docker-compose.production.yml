@@ -21,7 +21,7 @@ services:
       - media:/app/media
   frontend:
     env_file: .env
-    image: zingiev/foodgram_backend
+    image: zingiev/foodgram_frontend
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static

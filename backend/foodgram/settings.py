@@ -184,12 +184,10 @@ DJOSER = {
     }
 }
 
-SITE_URL = 'http://localhost:8000'
-BACKEND_URL = 'http://localhost:8000'
-FRONTEND_URL = 'http://localhost:3000'
+SITE_URL = 'https://foodgramz.hopto.org/'
 
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    SITE_URL,
 ]
 CORS_URLS_REGEX = r'^/api/.*$'
