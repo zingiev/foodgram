@@ -81,7 +81,11 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
         return is_subscribed(request, obj)
 
     def get_recipes(self, obj):
+        request = self.context.get('request')
+        recipes_limit = request.query_params.get('recipes_limit')
         recipes = Recipe.objects.filter(author=obj.author)
+        if recipes_limit and recipes_limit.isdigit():
+            recipes = recipes[:int(recipes_limit)]
         return RecipeMinifiedSerializer(
             recipes, many=True, context=self.context).data
 

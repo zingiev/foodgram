@@ -10,8 +10,8 @@ from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
 from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from .filters import IngredientsSearchFilter, RecipeFilter
@@ -43,7 +43,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'delete', 'patch']
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
@@ -87,8 +87,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         author = serializer.instance.author
         if user != author:
-            raise PermissionDenied('Обновлять этот рецепт может только автор.')
+            raise PermissionDenied('Нельзя изменить чужой рецепт.')
         serializer.save()
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        author = instance.author
+        if user != author:
+            raise PermissionDenied('Нельзя удалить чужой рецепт.')
+        instance.delete()
 
 
 class FavoriteViewSet(ShoppingFavoriteViewSet):

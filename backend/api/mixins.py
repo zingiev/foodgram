@@ -15,18 +15,18 @@ class ShoppingFavoriteViewSet(
     def create(self, request, **kwargs):
         recipe_id = kwargs.get('recipe_id')
         recipe = get_object_or_404(Recipe, pk=recipe_id)
-        favorite, created = self.queryset.get_or_create(
+        obj, created = self.queryset.get_or_create(
             user=request.user, recipe=recipe)
-        serializer = self.get_serializer(favorite)
+        serializer = self.get_serializer(obj)
         if created:
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, **kwargs):
         recipe_id = kwargs.get('recipe_id')
-        favorite = self.queryset.filter(
+        obj = self.queryset.filter(
             user=request.user, recipe=recipe_id)
-        if favorite.exists():
-            favorite.delete()
+        if obj.exists():
+            obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_404_NOT_FOUND)

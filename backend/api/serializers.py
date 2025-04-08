@@ -4,6 +4,7 @@ from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
+from rest_framework.exceptions import ValidationError
 from users.models import Subscription
 
 from .validators import slug_by_pattern
@@ -74,7 +75,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    image = Base64ImageField(required=False, allow_null=True)
+    image = Base64ImageField(required=True, allow_null=True)
 
     class Meta:
         model = Recipe
@@ -94,9 +95,52 @@ class RecipeSerializer(serializers.ModelSerializer):
             return obj.shoppingcart_set.filter(user=request.user).exists()
         return False
 
+    def validate(self, data):
+        request = self.context.get('request')
+        tags = request.data.get('tags')
+        ingredients = request.data.get('ingredients')
+        cooking_time = data.get('cooking_time')
+
+        if not tags:
+            raise serializers.ValidationError({'tags': 'Не указаны теги'})
+        if not ingredients:
+            raise serializers.ValidationError(
+                {'ingredients': 'Ингредиенты не добавлены'})
+        if cooking_time is not None and int(cooking_time) < 1:
+            raise serializers.ValidationError(
+                {'cooking_time': 'Время приготовления указано неверно'}
+            )
+
+        # Проверка тегов
+        existing_tag_ids = set(Tag.objects.values_list('id', flat=True))
+        tag_ids = []
+        for tag_id in tags:
+            if int(tag_id) not in existing_tag_ids:
+                raise serializers.ValidationError(
+                    {'tags': f'Тег с id={tag_id} не существует'})
+            if tag_id in tag_ids:
+                raise serializers.ValidationError(
+                    {'tags': 'Теги не должны повторяться'})
+            tag_ids.append(tag_id)
+
+        # Проверка ингредиентов
+        ingredient_ids = []
+        for ingredient in ingredients:
+            ingredient_id = ingredient.get('id')
+            amount = ingredient.get('amount')
+            if int(amount) < 1:
+                raise serializers.ValidationError(
+                    {'ingredients': 'Количество должно быть >= 1'})
+            if ingredient_id in ingredient_ids:
+                raise serializers.ValidationError(
+                    {'ingredients': 'Ингредиенты не должны повторяться'})
+            ingredient_ids.append(ingredient_id)
+
+        return data
+
     def create(self, validated_data):
         ingredients = validated_data.pop('recipeingredient_set')
-        tags = self.initial_data.get('tags')
+        tags = self.context['request'].data.get('tags')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
@@ -109,7 +153,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('recipeingredient_set', None)
-        tags = self.initial_data.get('tags')
+        tags = self.context['request'].data.get('tags')
 
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
