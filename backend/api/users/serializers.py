@@ -6,6 +6,7 @@ from recipes.models import Recipe
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 from users.models import Subscription
+from core.constants import MAX_LENGTH_FIRST_NAME, MAX_LENGTH_LAST_NAME
 
 User = get_user_model()
 
@@ -20,6 +21,10 @@ def is_subscribed(request, obj):
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
+    first_name = serializers.CharField(
+        max_length=MAX_LENGTH_FIRST_NAME, required=True)
+    last_name = serializers.CharField(
+        max_length=MAX_LENGTH_LAST_NAME, required=True)
 
     class Meta:
         model = User
