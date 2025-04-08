@@ -24,9 +24,10 @@ class ShoppingFavoriteViewSet(
 
     def delete(self, request, **kwargs):
         recipe_id = kwargs.get('recipe_id')
+        recipe = get_object_or_404(Recipe, pk=recipe_id)
         obj = self.queryset.filter(
             user=request.user, recipe=recipe_id)
         if obj.exists():
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
