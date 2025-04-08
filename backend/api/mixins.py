@@ -24,7 +24,7 @@ class ShoppingFavoriteViewSet(
 
     def delete(self, request, **kwargs):
         recipe_id = kwargs.get('recipe_id')
-        recipe = get_object_or_404(Recipe, pk=recipe_id)
+        get_object_or_404(Recipe, pk=recipe_id)
         obj = self.queryset.filter(
             user=request.user, recipe=recipe_id)
         if obj.exists():

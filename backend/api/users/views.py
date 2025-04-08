@@ -29,7 +29,10 @@ class CustomUserViewSet(UserViewSet):
     def me(self, request, *args, **kwargs):
         user = request.user
         if not user or not user.is_authenticated:
-            return Response({"error": "Вы не авторизованы"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"error": "Вы не авторизованы"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
         serializer = self.get_serializer(user)
         return Response(serializer.data)
 
@@ -72,23 +75,17 @@ class UserSubscribeViewSet(viewsets.ModelViewSet):
     def create(self, request, **kwargs):
         author, subscribe = self.get_subscribe(request, kwargs)
         if request.user == author:
-            return Response({'errors': 'Нельзя подписаться на себя'}, status=400)
+            return Response(
+                {'errors': 'Нельзя подписаться на себя'}, status=400)
         if subscribe:
             return Response({'errors': 'Уже подписан'}, status=400)
 
-        subscription = Subscription.objects.create(author=author, user=request.user)
+        subscription = Subscription.objects.create(
+            author=author, user=request.user)
         serializer = self.get_serializer(
             subscription, context=self.get_serializer_context()
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # author, subscribe = self.get_subscribe(request, kwargs)
-        # if not subscribe.exists() and author != request.user:
-        #     author = subscribe.create(author=author, user=request.user)
-        #     serializer = self.get_serializer(
-        #         subscribe, context=self.get_serializer_context()
-        #     )
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, **kwargs):
         author, subscribe = self.get_subscribe(request, kwargs)
