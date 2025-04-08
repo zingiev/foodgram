@@ -1,4 +1,4 @@
-from core.constants import URL_PATH_AVATAR
+from core.constants import URL_PATH_AVATAR, URL_PATH_ME
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
@@ -25,6 +25,14 @@ class CustomUserViewSet(UserViewSet):
     def get_queryset(self):
         return self.queryset
 
+    @action(methods=['get'], detail=False, url_path=URL_PATH_ME)
+    def me(self, request, *args, **kwargs):
+        user = request.user
+        if not user or not user.is_authenticated:
+            return Response({"error": "Вы не авторизованы"}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
+
     @action(methods=['put', 'delete'], detail=False,
             url_path=URL_PATH_AVATAR)
     def avatar(self, request):
@@ -36,6 +44,8 @@ class CustomUserViewSet(UserViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         serializer = UserAvatarSerializer(
             user, data=request.data, partial=True)
+        if not request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
