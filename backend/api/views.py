@@ -9,13 +9,12 @@ from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import IngredientsSearchFilter, RecipeFilter
-from .mixins import ShoppingFavoriteViewSet
+from .mixins import ShoppingFavoriteViewSet, ListRetrieveViewSet
 from .pagination import IngredientPagination, TagPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
@@ -23,7 +22,7 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           TagSerializer)
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(ListRetrieveViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     http_method_names = ['get']
@@ -31,7 +30,7 @@ class TagViewSet(viewsets.ModelViewSet):
     pagination_class = TagPagination
 
 
-class IngredientViewSet(viewsets.ModelViewSet):
+class IngredientViewSet(ListRetrieveViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientSerializer
     http_method_names = ['get']
@@ -83,20 +82,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
-    def perform_update(self, serializer):
-        user = self.request.user
-        author = serializer.instance.author
-        if user != author:
-            raise PermissionDenied('Нельзя изменить чужой рецепт.')
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        user = self.request.user
-        author = instance.author
-        if user != author:
-            raise PermissionDenied('Нельзя удалить чужой рецепт.')
-        instance.delete()
 
 
 class FavoriteViewSet(ShoppingFavoriteViewSet):
