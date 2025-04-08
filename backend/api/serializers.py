@@ -4,7 +4,6 @@ from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
-from rest_framework.exceptions import ValidationError
 from users.models import Subscription
 
 from .validators import slug_by_pattern

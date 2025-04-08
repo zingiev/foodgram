@@ -1,4 +1,5 @@
 from api.validators import username_by_path_me, username_by_pattern
+from core.constants import MAX_LENGTH_FIRST_NAME, MAX_LENGTH_LAST_NAME
 from core.decodeimage import Base64ImageField
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
@@ -6,7 +7,6 @@ from recipes.models import Recipe
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 from users.models import Subscription
-from core.constants import MAX_LENGTH_FIRST_NAME, MAX_LENGTH_LAST_NAME
 
 User = get_user_model()
 
