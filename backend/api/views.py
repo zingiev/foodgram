@@ -11,11 +11,11 @@ from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import IngredientsSearchFilter, RecipeFilter
+from .permissions import IsAuthorOrReadOnly
 from .mixins import ShoppingFavoriteViewSet
 from .pagination import IngredientPagination, TagPagination
 from .serializers import (FavoriteSerializer, IngredientSerializer,
@@ -44,7 +44,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly]
     http_method_names = ['get', 'post', 'delete', 'patch']
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
