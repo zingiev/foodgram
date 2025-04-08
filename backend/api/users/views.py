@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscription
@@ -18,7 +18,7 @@ User = get_user_model()
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerialier
-    pagination_class = PageNumberPagination
+    pagination_class = LimitOffsetPagination
     http_method_names = ['get', 'post', 'put', 'delete']
     permission_classes = [AllowAny]
 
