@@ -14,7 +14,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import IngredientsSearchFilter, RecipeFilter
-from .mixins import ShoppingFavoriteViewSet, ListRetrieveViewSet
+from .mixins import ListRetrieveViewSet, ShoppingFavoriteViewSet
 from .pagination import IngredientPagination, TagPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
