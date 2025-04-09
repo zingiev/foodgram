@@ -142,3 +142,4 @@ static/
 media/
 migrations/
 frontend/
+data.json

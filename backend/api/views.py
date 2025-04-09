@@ -10,7 +10,9 @@ from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
 from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (AllowAny,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
 from .filters import IngredientsSearchFilter, RecipeFilter
@@ -43,7 +45,8 @@ class IngredientViewSet(ListRetrieveViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly,
+                          IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'delete', 'patch']
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
