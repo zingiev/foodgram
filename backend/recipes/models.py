@@ -1,11 +1,17 @@
-from core.constants import (MAX_LENGTH_INGREDIENT, MAX_LENGTH_MEASUREMENT_UNIT,
-                            MAX_LENGTH_RECIPES, MAX_LENGTH_SHORT_URL,
-                            MAX_LENGTH_SLUG, MAX_LENGTH_TAG)
+from core.constants import (
+    MAX_LENGTH_INGREDIENT,
+    MAX_LENGTH_MEASUREMENT_UNIT,
+    MAX_LENGTH_RECIPES,
+    MAX_LENGTH_SHORT_URL,
+    MAX_LENGTH_SLUG,
+    MAX_LENGTH_TAG,
+    MIN_COOKING_TIME
+)
+from django.core.validators import MinValueValidator
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import UniqueConstraint
 from shortuuid import ShortUUID
-from rest_framework.exceptions import ValidationError
+
 
 User = get_user_model()
 
@@ -24,7 +30,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
-        ordering = ('id',)
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -43,10 +49,16 @@ class Ingredients(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ('id',)
+        ordering = ('name',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_name_measurement_unit'
+            )
+        ]
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.measurement_unit}'
 
 
 class Recipe(models.Model):
@@ -72,7 +84,8 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(verbose_name='Теги', to=Tag)
     cooking_time = models.PositiveIntegerField(
-        verbose_name='Время приготовления'
+        verbose_name='Время приготовления',
+        validators=[MinValueValidator(MIN_COOKING_TIME)]
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -91,8 +104,6 @@ class Recipe(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.ingredients.exists():
-            raise ValidationError('Рецепт должен содержать хотя бы один ингредиент.')
         if not self.short_url:
             self.short_url = ShortUUID().random(length=6).lower()
         super().save(*args, **kwargs)
@@ -116,6 +127,12 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент для рецепта'
         verbose_name_plural = 'Ингредиенты для рецептов'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient'
+            )
+        ]
 
     def __str__(self):
         return self.ingredient.name
@@ -136,9 +153,9 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
-        ordering = ('id',)
+        ordering = ('recipe',)
         constraints = [
-            UniqueConstraint(
+            models.UniqueConstraint(
                 fields=['user', 'recipe'],
                 name='unique_favorite')
         ]
@@ -162,9 +179,9 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
-        ordering = ('id',)
+        ordering = ('recipe',)
         constraints = [
-            UniqueConstraint(
+            models.UniqueConstraint(
                 fields=['user', 'recipe'],
                 name='unique_shopping_cart')
         ]
