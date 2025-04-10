@@ -46,6 +46,8 @@ class Subscription(models.Model):
     )
 
     class Meta:
+        verbose_name = 'подписка'
+        verbose_name = 'подписки'
         ordering = ('id',)
         constraints = [
             models.UniqueConstraint(
@@ -53,6 +55,9 @@ class Subscription(models.Model):
                 name='unique_user_author'
             )
         ]
+
+    def __str__(self):
+        return f'{self.user.username} -> {self.author.username}'
 
     def clean(self):
         if self.user == self.author:

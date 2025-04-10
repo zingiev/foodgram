@@ -14,6 +14,9 @@ from .models import (
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 0
+    min_num = 1
+    validate_min = True
+    autocomplete_fields = ('ingredient',)
 
 
 @admin.register(Recipe)
@@ -29,9 +32,9 @@ class RecipeAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         return queryset.annotate(favorite_count=Count('favorite'))
 
+    @admin.display(description='Добавлений в избранное')
     def favorite_count(self, obj):
         return obj.favorite_count
-    favorite_count.short_description = "Добавлений в избранное"
 
 
 @admin.register(Tag)
