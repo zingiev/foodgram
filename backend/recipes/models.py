@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import UniqueConstraint
 from shortuuid import ShortUUID
+from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -90,6 +91,8 @@ class Recipe(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        if not self.ingredients.exists():
+            raise ValidationError('Рецепт должен содержать хотя бы один ингредиент.')
         if not self.short_url:
             self.short_url = ShortUUID().random(length=6).lower()
         super().save(*args, **kwargs)

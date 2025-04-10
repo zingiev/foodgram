@@ -1,7 +1,14 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import Ingredients, Recipe, RecipeIngredient, Tag
+from .models import (
+    Tag,
+    Ingredients,
+    Recipe,
+    RecipeIngredient,
+    Favorite,
+    ShoppingCart
+)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -36,3 +43,13 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientsAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
     search_fields = ('name',)
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe')
+    
+    
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe')
