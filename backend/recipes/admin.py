@@ -1,14 +1,8 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import (
-    Tag,
-    Ingredients,
-    Recipe,
-    RecipeIngredient,
-    Favorite,
-    ShoppingCart
-)
+from .models import (Favorite, Ingredients, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 
 
 class RecipeIngredientInline(admin.TabularInline):

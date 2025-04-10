@@ -1,17 +1,10 @@
-from core.constants import (
-    MAX_LENGTH_INGREDIENT,
-    MAX_LENGTH_MEASUREMENT_UNIT,
-    MAX_LENGTH_RECIPES,
-    MAX_LENGTH_SHORT_URL,
-    MAX_LENGTH_SLUG,
-    MAX_LENGTH_TAG,
-    MIN_COOKING_TIME
-)
-from django.core.validators import MinValueValidator
+from core.constants import (MAX_LENGTH_INGREDIENT, MAX_LENGTH_MEASUREMENT_UNIT,
+                            MAX_LENGTH_RECIPES, MAX_LENGTH_SHORT_URL,
+                            MAX_LENGTH_SLUG, MAX_LENGTH_TAG, MIN_COOKING_TIME)
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 from shortuuid import ShortUUID
-
 
 User = get_user_model()
 
