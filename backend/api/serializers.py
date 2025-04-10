@@ -100,7 +100,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         tags = request.data.get('tags')
         ingredients = request.data.get('ingredients')
-        
+
         # Проверка тегов
         if not tags:
             raise serializers.ValidationError({'tags': 'Не указаны теги'})

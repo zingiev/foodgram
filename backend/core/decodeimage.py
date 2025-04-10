@@ -17,6 +17,7 @@ class Base64ImageField(serializers.ImageField):
                 image.verify()
                 file = ContentFile(img_bytes, name='temp.' + ext)
                 return super().to_internal_value(file)
-            except Exception as e:
-                raise serializers.ValidationError('Невалидный формат изображения.')
+            except Exception:
+                raise serializers.ValidationError(
+                    'Невалидный формат изображения.')
         return super().to_internal_value(data)
