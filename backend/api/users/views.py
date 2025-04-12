@@ -46,7 +46,11 @@ class CustomUserViewSet(UserViewSet):
             user.avatar.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         serializer = UserAvatarSerializer(
-            user, data=request.data, partial=True)
+            user,
+            data=request.data,
+            partial=True,
+            context=self.get_serializer_context()
+        )
         if not request.data:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer.is_valid(raise_exception=True)

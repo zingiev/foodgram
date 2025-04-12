@@ -38,11 +38,11 @@ class User(AbstractUser):
 class Subscription(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name='followers'
+        related_name='subscriptions'
     )
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        related_name='following'
+        related_name='subscribers'
     )
 
     class Meta:

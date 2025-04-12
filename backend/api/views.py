@@ -1,12 +1,10 @@
-from collections import defaultdict
-
 from core.constants import URL_PATH_DOWNLOAD_SHOPPING_CART
+from core.shopping_list import generate_shopping_list
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import (Favorite, Ingredients, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
+from recipes.models import Favorite, Ingredients, Recipe, ShoppingCart, Tag
 from rest_framework import status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -19,8 +17,8 @@ from .mixins import ListRetrieveViewSet, ShoppingFavoriteViewSet
 from .pagination import IngredientPagination, TagPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
-                          RecipeSerializer, ShoppingCartSerializer,
-                          TagSerializer)
+                          RecipeCreateSerializer, RecipeGetSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 
 
 class TagViewSet(ListRetrieveViewSet):
@@ -43,13 +41,19 @@ class IngredientViewSet(ListRetrieveViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
-    permission_classes = [IsAuthorOrReadOnly,
-                          IsAuthenticatedOrReadOnly]
+    permission_classes = [
+        IsAuthorOrReadOnly,
+        IsAuthenticatedOrReadOnly
+    ]
     http_method_names = ['get', 'post', 'delete', 'patch']
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'partial_update']:
+            return RecipeCreateSerializer
+        return RecipeGetSerializer
 
     @action(methods=['GET'],
             detail=False,
@@ -59,31 +63,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = request.user
         shopping_cart = ShoppingCart.objects.filter(
             user=user).select_related('recipe')
-        ingredients_dict = defaultdict(lambda: {'amount': 0, 'unit': ''})
-
-        for cart_item in shopping_cart:
-            recipe = cart_item.recipe
-            recipe_ingredients = RecipeIngredient.objects.filter(
-                recipe=recipe).select_related('ingredient')
-            for recipe_ingredient in recipe_ingredients:
-                ingredient = recipe_ingredient.ingredient
-                key = ingredient.name
-                ingredients_dict[key]['amount'] += recipe_ingredient.amount
-                ingredients_dict[key]['unit'] = ingredient.measurement_unit
-
-        shopping_list = "\n".join(
-            f"{name} ({data['unit']}) — {data['amount']}"
-            for name, data in ingredients_dict.items()
-        )
-
+        shopping_list = generate_shopping_list(shopping_cart)
         response = HttpResponse(shopping_list,
                                 content_type="text/plain; charset=utf-8")
         response['Content-Disposition'] = 'attachment; \
             filename="shopping_list.txt"'
         return response
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
 
 
 class FavoriteViewSet(ShoppingFavoriteViewSet):
