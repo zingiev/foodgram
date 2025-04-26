@@ -93,8 +93,10 @@ class UserSubscribeViewSet(viewsets.ModelViewSet):
 
     def delete(self, request, **kwargs):
         author, subscribe = self.get_subscribe(request, kwargs)
-        if subscribe.exists():
-            deleted, _ = subscribe.delete()
-            if deleted > 0:
-                return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        deleted, _ = subscribe.delete()
+        return Response(status=(
+                status.HTTP_204_NO_CONTENT
+                if deleted else
+                status.HTTP_400_BAD_REQUEST
+            )
+        )
